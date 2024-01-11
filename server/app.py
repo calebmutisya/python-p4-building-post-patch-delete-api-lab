@@ -83,7 +83,22 @@ def baked_goods():
 
         return response
 
+@app.route('/baked_goods/<int:id>', methods=['GET', 'DELETE'])
+def baked_good_by_id(id):
+    baked_good=BakedGood.query.get(id)
 
+    if not baked_good:
+        return make_response(jsonify({"error": "Baked good not found"}), 404)
+
+    if request.method == 'GET':
+        baked_good_dict= baked_good.to_dict()
+        return make_response(baked_good_dict,200)
+    
+    elif request.method == 'DELETE':
+        db.session.delete(baked_good)
+        db.session.commit()
+
+        return make_response(jsonify({"message": "Baked good successfully deleted"}), 200)
 
 @app.route('/baked_goods/by_price')
 def baked_goods_by_price():
